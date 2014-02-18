@@ -22,7 +22,14 @@ public class MouseWeapon : MonoBehaviour
     void Update()
     {
         MoveCursorEmitter();
-        transform.rotation = Camera.main.transform.rotation;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            Debug.DrawLine(ray.origin, hit.point);
+            transform.rotation = Quaternion.LookRotation(-hit.point);
+        }
     }
 
     void FixedUpdate()
@@ -42,9 +49,7 @@ public class MouseWeapon : MonoBehaviour
     void MoveCursorEmitter()
     {
         Vector3 mousePos = Input.mousePosition;
-
         Vector3 wantedPos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, depth));
-
         transform.position = wantedPos;
     }
 
