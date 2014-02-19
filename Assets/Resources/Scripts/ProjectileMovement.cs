@@ -4,6 +4,15 @@ using System.Collections;
 public class ProjectileMovement : MonoBehaviour
 {
 
+    public enum ProjectileType
+    {
+        Player,
+        Enemy
+    }
+
+    public ProjectileType projectileType;
+
+    public GameObject insultText;
     public float force = 10f;
 
     void FixedUpdate()
@@ -14,5 +23,13 @@ public class ProjectileMovement : MonoBehaviour
     void OnTriggerEnter()
     {
         Destroy(gameObject);
+    }
+
+    void OnDestroy() {
+        if (projectileType == ProjectileType.Enemy)
+        {
+            if (insultText != null)
+                Instantiate(insultText, transform.position, Quaternion.identity);
+        }
     }
 }

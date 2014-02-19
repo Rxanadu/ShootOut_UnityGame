@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Resources\Scripts\CameraZoom.cs" />
      <Compile Include="Assets\Resources\Scripts\EnemyMovement.cs" />
+     <Compile Include="Assets\Resources\Scripts\InsultLines.cs" />
      <Compile Include="Assets\Resources\Scripts\MouseWeapon.cs" />
      <Compile Include="Assets\Resources\Scripts\PartnerMovement.cs" />
      <Compile Include="Assets\Resources\Scripts\PauseGame.cs" />
