@@ -20,6 +20,7 @@ public class EnemyMovement : MonoBehaviour
     public float fireRate = 12f;
 
     float nextFire;
+    bool abilitiesEnabled;              //determines whether enemy is able to perform regular functions
     Transform enemyTransform;
 
     void Start()
@@ -29,8 +30,8 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        CastRayForward();
-
+        if (abilitiesEnabled)
+            CastRayForward();
     }
 
     void CastRayForward()
@@ -70,15 +71,11 @@ public class EnemyMovement : MonoBehaviour
     /// </summary>
     void FireAtPlayer(Ray ray, RaycastHit hit)
     {
-        print("hi");
-
 
         if (Physics.Raycast(ray, out hit, fireDistance))
         {
             if (hit.transform.tag == "Player")
             {
-                Debug.Log("I'm hitting the player");
-                Debug.DrawLine(ray.origin, hit.point, Color.green);
                 if (Time.time > nextFire)
                 {
                     nextFire = Time.time + fireRate;
@@ -87,5 +84,13 @@ public class EnemyMovement : MonoBehaviour
 
             }
         }
+    }
+
+    void GameStart() {
+        abilitiesEnabled = true;
+    }
+
+    void GameOver() {
+        abilitiesEnabled = false;
     }
 }

@@ -14,22 +14,32 @@ public class ProjectileMovement : MonoBehaviour
 
     public GameObject insultText;
     public float force = 10f;
+    public ParticleSystem boltExplosion;
+
+    PartnerMovement partner;
+
+    void Awake() {
+        partner = GameObject.FindGameObjectWithTag("Player").GetComponent<PartnerMovement>();
+    }
 
     void FixedUpdate()
     {
         rigidbody.AddForce(transform.forward * force, ForceMode.Acceleration);
     }
 
-    void OnTriggerEnter()
+    void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
-    }
-
-    void OnDestroy() {
         if (projectileType == ProjectileType.Enemy)
         {
             if (insultText != null)
                 Instantiate(insultText, transform.position, Quaternion.identity);
+            if (other.tag == "Player") {
+                partner.ReducePlayerMovement();
+            }
+            return;
         }
+        Destroy(gameObject);
+        if (boltExplosion != null)
+            Instantiate(boltExplosion, transform.position, transform.rotation);
     }
 }

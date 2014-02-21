@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
-public class InsultLines : MonoBehaviour {
+public class InsultLines : MonoBehaviour
+{
+    public string[] insults;
+    TextMesh insultText;
 
-    public TextAsset insultDoc;
+    void Awake()
+    {
+        insultText = GetComponent<TextMesh>();
+        insultText.text = insults[Random.Range(0, insults.Length)];
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void Update()
+    {        
+        transform.rotation = Camera.main.transform.rotation;
+    }
 }

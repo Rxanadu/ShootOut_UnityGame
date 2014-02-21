@@ -4,6 +4,7 @@ using System.Collections;
 public class PartnerMovement : MonoBehaviour
 {
     public float speed = 60f;
+    public float travelDistance = 10f;
     public GameObject movementMarker;
     public LayerMask pointLayer;
     public LineRenderer targetLine;
@@ -13,8 +14,16 @@ public class PartnerMovement : MonoBehaviour
     Quaternion markerRotation;
     GameObject markerClone;
     bool settingTargetPosition;
+    float initSpeed, initTravelDistance;
 
-    void Start() {
+    void Awake()
+    {
+        initSpeed = speed;
+        initTravelDistance = travelDistance;
+    }
+
+    void Start()
+    {
         targetPosition = transform.position;
         markerRotation = Quaternion.Euler(90, 0, 0);
 
@@ -29,12 +38,23 @@ public class PartnerMovement : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)) {
+        speed = Mathf.Clamp(speed, 0, initSpeed);
+        travelDistance = Mathf.Clamp(travelDistance, 0, initTravelDistance);
+
+        SetPlayerMovementControls();        
+    }
+
+    /// <summary>
+    /// sets movement controls for player object
+    /// </summary>
+    void SetPlayerMovementControls() {
+        if (Input.GetMouseButtonDown(1))
+        {
             settingTargetPosition = true;
         }
         if (Input.GetMouseButtonUp(1))
             settingTargetPosition = false;
-        
+
         if (settingTargetPosition)
         {
             targetLine.enabled = true;
@@ -47,32 +67,43 @@ public class PartnerMovement : MonoBehaviour
         }
     }
 
-    void SetTargetLocationWithLayer() {
+    /// <summary>
+    /// sets location for where player will move
+    /// <remarks>should be used with Physics.Raycast</remarks>
+    /// </summary>
+    void SetTargetLocationWithLayer()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, pointLayer))
         {
-            Vector3 targetPoint = hit.point;
-            Vector3 newTargetPoint = new Vector3(targetPoint.x, transform.position.y, targetPoint.z);
-            targetPosition = newTargetPoint;
+            if (Vector3.Distance(transform.position, hit.point) < Mathf.Abs(travelDistance))
+            {
+                Vector3 targetPoint = hit.point;
+                Vector3 newTargetPoint = new Vector3(targetPoint.x, transform.position.y, targetPoint.z);
+                targetPosition = newTargetPoint;
 
-            Quaternion targetRotation = Quaternion.LookRotation(newTargetPoint - transform.position);
-            transform.rotation = targetRotation;
+                Quaternion targetRotation = Quaternion.LookRotation(newTargetPoint - transform.position);
+                transform.rotation = targetRotation;
 
-            markerClone.transform.position = targetPosition;
-            markerClone.transform.rotation = markerRotation;
-            markerClone.renderer.enabled = true;
+                markerClone.transform.position = targetPosition;
+                markerClone.transform.rotation = markerRotation;
+                markerClone.renderer.enabled = true;
 
-            targetLine.SetPosition(0, transform.position);
-            targetLine.SetPosition(1, hit.point);
+                //sets positions for line renderer
+                targetLine.SetPosition(0, transform.position);
+                targetLine.SetPosition(1, hit.point);
+            }
         }
     }
 
     /// <summary>
+    /// sets location for where player will move
     /// <remarks>for using with games requiring plane raycast</remarks>
     /// </summary>
-    void SetTargetLocation() {
+    void SetTargetLocation()
+    {
         Plane playerPlane = new Plane(Vector3.up, transform.position);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         float hitDist = 0.0f;
@@ -92,7 +123,12 @@ public class PartnerMovement : MonoBehaviour
         }
     }
 
-    void MovePartnerToTargetLocation() {
+    /// <summary>
+    /// move player to target location
+    /// <remarks>moves player based on frames</remarks>
+    /// </summary>
+    void MovePartnerToTargetLocation()
+    {
         Vector3 direction = targetPosition - transform.position;
         float distance = direction.magnitude;
         float step = speed * Time.deltaTime;
@@ -107,4 +143,17 @@ public class PartnerMovement : MonoBehaviour
             markerClone.renderer.enabled = false;
         }
     }
+
+    /// <summary>
+    /// decreases enemy movement distance, movement speed
+    /// </summary>
+    public void ReducePlayerMovement()
+    {
+        speed -= .1f * initSpeed;
+        travelDistance -= .1f * initTravelDistance;
+        print("Current speed: " + speed + "; Current travel distance: " + travelDistance);
+    }
+
+    void GameStart() { }
+    void GameOver() { }
 }
