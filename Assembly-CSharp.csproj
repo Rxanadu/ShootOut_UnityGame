@@ -50,12 +50,13 @@
      <Compile Include="Assets\Resources\Scripts\DestroyByTime.cs" />
      <Compile Include="Assets\Resources\Scripts\EnemyMovement.cs" />
      <Compile Include="Assets\Resources\Scripts\GameController.cs" />
-     <Compile Include="Assets\Resources\Scripts\GameEventManager.cs" />
      <Compile Include="Assets\Resources\Scripts\InsultLines.cs" />
+     <Compile Include="Assets\Resources\Scripts\LevelEnd.cs" />
      <Compile Include="Assets\Resources\Scripts\MouseWeapon.cs" />
      <Compile Include="Assets\Resources\Scripts\PartnerMovement.cs" />
      <Compile Include="Assets\Resources\Scripts\PauseGame.cs" />
      <Compile Include="Assets\Resources\Scripts\ProjectileMovement.cs" />
+     <Compile Include="Assets\Resources\Scripts\ScreenFader.cs" />
      <Compile Include="Assets\Resources\Scripts\SmoothFollow.cs" />
      <None Include="Assets\Resources\Documents\insultText.txt" />
   </ItemGroup>

@@ -1,39 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// controls movement aspects of player
+/// <remarks>used with player object</remarks>
+/// </summary>
 public class PartnerMovement : MonoBehaviour
 {
     public float speed = 60f;
     public float travelDistance = 10f;
+    public float damagePercentage =.1f;
     public GameObject movementMarker;
     public LayerMask pointLayer;
     public LineRenderer targetLine;
 
+    bool settingTargetPosition;
+    float initSpeed, initTravelDistance;
+    bool movementActive;
     Vector3 targetPosition;
     Quaternion targetRotation;
     Quaternion markerRotation;
     GameObject markerClone;
-    bool settingTargetPosition;
-    float initSpeed, initTravelDistance;
+    GameController gameController;
 
     void Awake()
     {
         initSpeed = speed;
         initTravelDistance = travelDistance;
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     void Start()
     {
-        targetPosition = transform.position;
-        markerRotation = Quaternion.Euler(90, 0, 0);
-
-        if (movementMarker != null)
-        {
-            markerClone = Instantiate(movementMarker, targetPosition, Quaternion.identity) as GameObject;
-            markerClone.transform.rotation = markerRotation;
-            markerClone.renderer.enabled = false;
-        }
-        settingTargetPosition = false;
+        StartPlayerMovement();
     }
 
     void Update()
@@ -41,7 +40,17 @@ public class PartnerMovement : MonoBehaviour
         speed = Mathf.Clamp(speed, 0, initSpeed);
         travelDistance = Mathf.Clamp(travelDistance, 0, initTravelDistance);
 
-        SetPlayerMovementControls();        
+        if(movementActive)
+            SetPlayerMovementControls();        
+    }
+
+    void OnTriggerEnter(Collider other) {
+        if (other.tag == "EnemyProjectile")
+        {
+            if (speed <= 0 || travelDistance <= 0) {
+                gameController.GameOver();
+            }
+        }
     }
 
     /// <summary>
@@ -149,11 +158,27 @@ public class PartnerMovement : MonoBehaviour
     /// </summary>
     public void ReducePlayerMovement()
     {
-        speed -= .1f * initSpeed;
-        travelDistance -= .1f * initTravelDistance;
+        speed -= damagePercentage * initSpeed;
+        travelDistance -= damagePercentage * initTravelDistance;
         print("Current speed: " + speed + "; Current travel distance: " + travelDistance);
     }
 
-    void GameStart() { }
-    void GameOver() { }
+    void StartPlayerMovement() {
+        targetPosition = transform.position;
+        markerRotation = Quaternion.Euler(90, 0, 0);
+
+        if (movementMarker != null)
+        {
+            markerClone = Instantiate(movementMarker, targetPosition, Quaternion.identity) as GameObject;
+            markerClone.transform.rotation = markerRotation;
+            markerClone.renderer.enabled = false;
+        }
+        settingTargetPosition = false;
+
+        movementActive = true;
+    }
+
+    void EndEnemyMovement() { 
+        movementActive = false;
+    }
 }

@@ -23,9 +23,8 @@ public class EnemyMovement : MonoBehaviour
     bool abilitiesEnabled;              //determines whether enemy is able to perform regular functions
     Transform enemyTransform;
 
-    void Start()
-    {
-        enemyTransform = transform.parent;
+    void Start() {
+        StartEnemyMovement();
     }
 
     void Update()
@@ -86,11 +85,12 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void GameStart() {
+    void StartEnemyMovement() {
+        enemyTransform = transform.parent;
         abilitiesEnabled = true;
     }
 
-    void GameOver() {
+    void EndEnemyMovement() {
         abilitiesEnabled = false;
     }
 }
